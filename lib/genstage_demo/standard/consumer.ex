@@ -1,4 +1,4 @@
-defmodule GenstageDemo.Consumer do
+defmodule GenstageDemo.Standard.Consumer do
   use GenStage
 
   def start_link(queue_name) do
@@ -10,14 +10,15 @@ defmodule GenstageDemo.Consumer do
   end
 
   def handle_events(events, _from, queue_name) do
-    IO.puts "Received events from SQS"
-    Enum.each(events, fn(event) ->
+    IO.puts("Received events from SQS")
+
+    Enum.each(events, fn event ->
       Process.sleep(1000)
       IO.inspect(event)
-      ExAws.SQS.delete_message(queue_name, event[:receipt_handle]) |> ExAws.request!
+      ExAws.SQS.delete_message(queue_name, event[:receipt_handle]) |> ExAws.request!()
     end)
+
     IO.puts("finished handling events")
     {:noreply, [], queue_name}
   end
-
 end

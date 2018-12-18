@@ -1,9 +1,9 @@
-defmodule GenstageDemo.Producer do
+defmodule GenstageDemo.Standard.Producer do
   use GenStage
   import Logger
 
-  def start_link(state) do
-    GenStage.start_link(__MODULE__, state, name: __MODULE__)
+  def start_link(%{queue_name: queue_name} = state) do
+    GenStage.start_link(__MODULE__, state, name: String.to_atom(queue_name))
   end
 
   def init(state) do
@@ -17,24 +17,25 @@ defmodule GenstageDemo.Producer do
 
     messages = get_messages(queue_name, processes)
 
-    Logger.debug("Messages #{length(messages)}")
+    # Logger.debug("Messages #{length(messages)}")
 
-    Process.send(self(), :check_messages, [])
+    Process.send_after(self(), :check_messages, 2000, [])
 
     state = %{state | processes: processes - Enum.count(messages)}
     {:noreply, messages, state}
   end
 
   def handle_demand(demand, %{processes: processes} = state) do
-    IO.puts("Handling downstream demand (#{demand}) for messages")
-    send(self(), :check_messages)
+    Logger.debug("Handling downstream demand (#{demand}) for messages")
+    Process.send_after(self(), :check_messages, 1200, [])
     state = %{state | processes: demand + processes}
     {:noreply, [], state}
   end
 
   defp get_messages(queue_name, max) do
     response =
-      ExAws.SQS.receive_message(queue_name, max_number_of_messages: max) |> ExAws.request!()
+      ExAws.SQS.receive_message(queue_name, max_number_of_messages: max, wait_time_seconds: 10)
+      |> ExAws.request!()
 
     %{body: %{messages: messages}} = response
     messages

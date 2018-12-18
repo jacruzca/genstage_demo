@@ -1,4 +1,4 @@
-defmodule GenstageDemo.ConsumerSupervisor do
+defmodule GenstageDemo.Standard.ConsumerSupervisor do
   use ConsumerSupervisor
 
   def start_link(queue_name) do
@@ -12,6 +12,6 @@ defmodule GenstageDemo.ConsumerSupervisor do
 
     {:ok, children,
      strategy: :one_for_one,
-     subscribe_to: [{GenstageDemo.Producer, max_demand: 10, min_demand: 1}]}
+     subscribe_to: [{String.to_atom(queue_name), max_demand: 10, min_demand: 1}]}
   end
 end

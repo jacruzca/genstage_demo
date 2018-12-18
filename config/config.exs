@@ -2,10 +2,10 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :genstage_demo, queue_name: "test"
+config :genstage_demo, queue1: "another_topic", queue2: "another_topic2"
 
 config :ex_aws,
-  region: "us-east-2",
+  region: "us-west-2",
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role]
 

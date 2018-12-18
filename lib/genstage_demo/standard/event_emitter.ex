@@ -1,5 +1,4 @@
-defmodule GenstageDemo.EventEmitter do
-
+defmodule GenstageDemo.Standard.EventEmitter do
   use GenServer
 
   def start_link(queue_name) do
@@ -13,11 +12,14 @@ defmodule GenstageDemo.EventEmitter do
 
   def handle_info(:emit_event, queue_name) do
     emit_event()
-    ExAws.SQS.send_message(queue_name, "#{:erlang.system_time(:milli_seconds)}") |> ExAws.request!
+
+    ExAws.SQS.send_message(queue_name, "#{:erlang.system_time(:milli_seconds)}")
+    |> ExAws.request!()
+
     {:noreply, queue_name}
   end
 
   def emit_event() do
-    Process.send_after(self(), :emit_event, 1000)
+    Process.send_after(self(), :emit_event, 200)
   end
 end
