@@ -26,6 +26,7 @@ defmodule GenstageDemo.Mixfile do
       {:poison, "~> 4.0.1"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_sqs, "~> 2.0"},
+      {:ex_aws_sns, "~> 2.0.1"},
       {:sweet_xml, "~> 0.6.1"},
       {:hackney, "~> 1.10.1"}
     ]
